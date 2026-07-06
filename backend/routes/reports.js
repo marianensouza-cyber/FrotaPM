@@ -18,9 +18,11 @@ router.get('/maintenance-csv', (req, res) => {
     }
     
     let csv = 'Placa,Modelo,Tipo de Manutenção,Descrição,Custo,Realizado por,Data,Notas\n';
-    rows.forEach(row => {
-      csv += `${row.plate},${row.model},${row.maintenance_type},"${row.description}",${row.cost},${row.performed_by},${row.performed_at},"${row.notes}"\n`;
-    });
+    if (rows && rows.length > 0) {
+      rows.forEach(row => {
+        csv += `${row.plate},${row.model},${row.maintenance_type},"${row.description}",${row.cost},${row.performed_by},${row.performed_at},"${row.notes}"\n`;
+      });
+    }
     
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename=maintenance-report.csv');
@@ -65,4 +67,4 @@ router.get('/upcoming', (req, res) => {
   });
 });
 
-module.module.exports = router;
+module.exports = router;
