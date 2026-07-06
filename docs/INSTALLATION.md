@@ -1,99 +1,178 @@
-# FrotaPM - Guia de Instalação
+# Guia de Instalação - FrotaPM
 
 ## Pré-requisitos
-- Node.js 16+ (https://nodejs.org/)
-- Git (https://git-scm.com/)
 
-## Passo 1: Clonar o repositório
+- **Node.js 16+** (https://nodejs.org/)
+- **Git** (https://git-scm.com/)
+- **Terminal/CMD**
 
+## 🚀 Forma Rápida (Recomendado)
+
+### Windows
+
+1. Clone o repositório:
 ```bash
 git clone https://github.com/marianensouza-cyber/FrotaPM.git
 cd FrotaPM
+git checkout develop
 ```
 
-## Passo 2: Instalar dependências do Backend
+2. Execute o script:
+```bash
+start.bat
+```
+
+3. Pronto! Duas janelas de terminal abrirão automaticamente
+
+### macOS/Linux
+
+1. Clone o repositório:
+```bash
+git clone https://github.com/marianensouza-cyber/FrotaPM.git
+cd FrotaPM
+git checkout develop
+```
+
+2. Dê permissão e execute:
+```bash
+chmod +x start.sh
+./start.sh
+```
+
+3. Pronto! O app estará rodando
+
+---
+
+## Manual (Forma Lenta)
+
+### Terminal 1 - Backend
 
 ```bash
 cd backend
 npm install
-```
-
-## Passo 3: Configurar variáveis de ambiente
-
-Crie um arquivo `.env` na pasta `backend`:
-
-```
-PORT=5000
-NODE_ENV=development
-DB_TYPE=sqlite
-DB_FILE=./data/frotapm.db
-FRONTEND_URL=http://localhost:5173
-```
-
-## Passo 4: Iniciar o Backend
-
-```bash
 npm run dev
 ```
 
-Você deve ver: `✅ FrotaPM Backend running on http://localhost:5000`
+Você deve ver:
+```
+✅ FrotaPM Backend running on http://localhost:5000
+📦 Connected to SQLite: ./data/frotapm.db
+✅ Database tables created successfully
+```
 
-## Passo 5: Instalar dependências do Frontend
-
-Em outro terminal:
+### Terminal 2 - Frontend
 
 ```bash
 cd frontend
 npm install
-```
-
-## Passo 6: Iniciar o Frontend
-
-```bash
 npm run dev
 ```
 
-Você deve ver: `VITE v4.x.x ready in xxx ms`
+Você deve ver:
+```
+VITE v4.x.x ready in xxx ms
+✅ Local: http://localhost:5173/
+```
 
-## Passo 7: Acessar a aplicação
+### Abra o navegador
 
-Abra o navegador e vá para: http://localhost:5173
+```
+http://localhost:5173
+```
 
-## Deployment (Produção)
+---
 
-### Backend (Railway ou Render)
+## 📁 Estrutura
 
-1. Faça push para GitHub
-2. Conecte o repositório no Railway/Render
-3. Configure variáveis de ambiente
-4. Deploy automático
+```
+FrotaPM/
+├── backend/                 # API Node.js
+│  ├── server.js
+│  ├── routes/               # Endpoints
+│  ├── config/
+│  ├── data/                 # Banco SQLite
+│  └── package.json
+├── frontend/               # React + Vite
+│  ├── src/
+│  │  ├── pages/
+│  │  ├── components/
+│  │  └── styles/
+│  └── package.json
+├── start.sh                # Script Linux/macOS
+├── start.bat               # Script Windows
+├── README.md
+└── docs/
+```
 
-### Frontend (Vercel)
-
-1. Vá para https://vercel.com
-2. Importar projeto do GitHub
-3. Build command: `npm run build`
-4. Output directory: `dist`
-5. Deploy automático
+---
 
 ## Troubleshooting
 
-### Erro: "Module not found"
+### Erro: "Port already in use"
+
 ```bash
-# Limpe node_modules e reinstale
+# Matar processo na porta 5000
+lsof -ti:5000 | xargs kill -9
+
+# Matar processo na porta 5173
+lsof -ti:5173 | xargs kill -9
+```
+
+### Erro: "npm: command not found"
+
+Instale Node.js: https://nodejs.org/
+
+### Erro: "Cannot find module"
+
+```bash
+cd backend
 rm -rf node_modules
 npm install
 ```
 
-### Erro: "Port already in use"
-```bash
-# Backend usa porta 5000
-# Frontend usa porta 5173
-# Se já estiverem em uso, altere em vite.config.js e server.js
-```
+### Database está vazio
 
-### Database não foi criado
 ```bash
-# Verifique se a pasta 'data' existe no backend
 mkdir -p backend/data
 ```
+
+---
+
+## 🎉 Primeira Execução
+
+Depois que o app abrir:
+
+1. Clique em **"Viaturas"**
+2. Clique em **"➕ Adicionar Viatura"**
+3. Preencha:
+   - Placa: `PM-0001`
+   - Modelo: `Fiat Toro`
+   - Ano: `2023`
+   - Km: `0`
+4. Clique em **"Salvar"**
+5. Explore o Dashboard!
+
+---
+
+## 🛠️ Stack Tecnológico
+
+| Camada | Tecnologia |
+|--------|------------|
+| Backend | Node.js + Express |
+| Frontend | React 18 + Vite |
+| Database | SQLite 3 |
+| Mapa | Leaflet + OpenStreetMap |
+| Estilos | CSS3 Puro |
+| API | REST + JSON |
+
+---
+
+## 🙋 Suporte
+
+Tem dúvidas?
+
+- Abra uma **Issue** no repositório
+- Verifique a **API.md** para endpoints
+- Consulte o **README.md** principal
+
+Bom uso! 🚗
