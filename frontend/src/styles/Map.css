@@ -13,6 +13,7 @@
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   margin-bottom: 1rem;
+  background-color: #e5e7eb;
 }
 
 .map-legend {
@@ -30,6 +31,28 @@
 .map-legend p {
   margin: 0.5rem 0;
   color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-dot.available {
+  background-color: green;
+}
+
+.legend-dot.maintenance {
+  background-color: orange;
+}
+
+.legend-dot.inactive {
+  background-color: red;
 }
 
 @media (max-width: 768px) {
