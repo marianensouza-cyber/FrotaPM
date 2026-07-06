@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const db = require('sqlite3').verbose();
+const sqlite3 = require('sqlite3').verbose();
 
-const database = new db.Database(process.env.DB_FILE || './data/frotapm.db');
+const database = new sqlite3.Database(process.env.DB_FILE || './data/frotapm.db');
 
-// GET maintenance schedules for a vehicle
 router.get('/schedules/:vehicleId', (req, res) => {
   const { vehicleId } = req.params;
   const sql = 'SELECT * FROM maintenance_schedules WHERE vehicle_id = ? ORDER BY next_due ASC';
@@ -13,11 +12,10 @@ router.get('/schedules/:vehicleId', (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json(rows);
+    res.json(rows || []);
   });
 });
 
-// GET all maintenance records for a vehicle
 router.get('/records/:vehicleId', (req, res) => {
   const { vehicleId } = req.params;
   const sql = 'SELECT * FROM maintenance_records WHERE vehicle_id = ? ORDER BY performed_at DESC';
@@ -26,11 +24,10 @@ router.get('/records/:vehicleId', (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json(rows);
+    res.json(rows || []);
   });
 });
 
-// CREATE maintenance schedule
 router.post('/schedules', (req, res) => {
   const { vehicle_id, maintenance_type, interval_km, interval_days, priority } = req.body;
   
@@ -47,7 +44,6 @@ router.post('/schedules', (req, res) => {
   });
 });
 
-// CREATE maintenance record
 router.post('/records', (req, res) => {
   const { vehicle_id, maintenance_type, description, cost, performed_by, notes } = req.body;
   
@@ -64,7 +60,6 @@ router.post('/records', (req, res) => {
   });
 });
 
-// UPDATE maintenance record
 router.put('/records/:id', (req, res) => {
   const { id } = req.params;
   const { maintenance_type, description, cost, performed_by, notes } = req.body;
@@ -83,7 +78,6 @@ router.put('/records/:id', (req, res) => {
   });
 });
 
-// DELETE maintenance record
 router.delete('/records/:id', (req, res) => {
   const { id } = req.params;
   

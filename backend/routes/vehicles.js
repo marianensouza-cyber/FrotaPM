@@ -1,22 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const { v4: uuidv4 } = require('uuid');
-const db = require('sqlite3').verbose();
+const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
-const database = new db.Database(process.env.DB_FILE || './data/frotapm.db');
+const database = new sqlite3.Database(process.env.DB_FILE || './data/frotapm.db');
 
-// GET all vehicles
 router.get('/', (req, res) => {
-  database.all('SELECT * FROM vehicles', (err, rows) => {
+  database.all('SELECT * FROM vehicles ORDER BY plate ASC', (err, rows) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json(rows);
+    res.json(rows || []);
   });
 });
 
-// GET vehicle by ID
 router.get('/:id', (req, res) => {
   const { id } = req.params;
   database.get('SELECT * FROM vehicles WHERE id = ?', [id], (err, row) => {
@@ -30,7 +27,6 @@ router.get('/:id', (req, res) => {
   });
 });
 
-// CREATE vehicle
 router.post('/', (req, res) => {
   const { plate, model, year, mileage } = req.body;
   
@@ -54,7 +50,6 @@ router.post('/', (req, res) => {
   });
 });
 
-// UPDATE vehicle
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const { plate, model, year, mileage, status, latitude, longitude } = req.body;
@@ -76,7 +71,6 @@ router.put('/:id', (req, res) => {
   });
 });
 
-// DELETE vehicle
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
   

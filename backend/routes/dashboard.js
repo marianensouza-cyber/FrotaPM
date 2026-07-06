@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const db = require('sqlite3').verbose();
+const sqlite3 = require('sqlite3').verbose();
 
-const database = new db.Database(process.env.DB_FILE || './data/frotapm.db');
+const database = new sqlite3.Database(process.env.DB_FILE || './data/frotapm.db');
 
-// GET dashboard KPIs
 router.get('/kpis', (req, res) => {
   database.all(`
     SELECT 
@@ -17,11 +16,10 @@ router.get('/kpis', (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json(rows[0]);
+    res.json(rows[0] || { total_vehicles: 0, available_vehicles: 0, in_maintenance: 0, inactive_vehicles: 0 });
   });
 });
 
-// GET vehicles needing maintenance soon
 router.get('/upcoming-maintenance', (req, res) => {
   database.all(`
     SELECT 
@@ -34,11 +32,10 @@ router.get('/upcoming-maintenance', (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json(rows);
+    res.json(rows || []);
   });
 });
 
-// GET maintenance cost summary
 router.get('/cost-summary', (req, res) => {
   database.all(`
     SELECT 
@@ -54,7 +51,7 @@ router.get('/cost-summary', (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json(rows);
+    res.json(rows || []);
   });
 });
 

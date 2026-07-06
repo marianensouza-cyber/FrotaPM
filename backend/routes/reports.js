@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const db = require('sqlite3').verbose();
+const sqlite3 = require('sqlite3').verbose();
 
-const database = new db.Database(process.env.DB_FILE || './data/frotapm.db');
+const database = new sqlite3.Database(process.env.DB_FILE || './data/frotapm.db');
 
-// GET report - All maintenance records (CSV)
 router.get('/maintenance-csv', (req, res) => {
   database.all(`
     SELECT 
@@ -18,7 +17,6 @@ router.get('/maintenance-csv', (req, res) => {
       return res.status(500).json({ error: err.message });
     }
     
-    // Convert to CSV
     let csv = 'Placa,Modelo,Tipo de Manutenção,Descrição,Custo,Realizado por,Data,Notas\n';
     rows.forEach(row => {
       csv += `${row.plate},${row.model},${row.maintenance_type},"${row.description}",${row.cost},${row.performed_by},${row.performed_at},"${row.notes}"\n`;
@@ -30,7 +28,6 @@ router.get('/maintenance-csv', (req, res) => {
   });
 });
 
-// GET report - Fleet status (JSON)
 router.get('/fleet-status', (req, res) => {
   database.all(`
     SELECT 
@@ -46,11 +43,10 @@ router.get('/fleet-status', (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json(rows);
+    res.json(rows || []);
   });
 });
 
-// GET report - Upcoming maintenance (JSON)
 router.get('/upcoming', (req, res) => {
   database.all(`
     SELECT 
@@ -65,8 +61,8 @@ router.get('/upcoming', (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json(rows);
+    res.json(rows || []);
   });
 });
 
-module.exports = router;
+module.module.exports = router;
