@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import '../styles/Vehicles.css'
 
 function Vehicles({ vehicles, onVehicleUpdate }) {
@@ -38,11 +38,12 @@ function Vehicles({ vehicles, onVehicleUpdate }) {
         method: 'DELETE',
       })
       if (response.ok) {
-        alert('Viatura deletada com sucesso')
+        alert('✅ Viatura deletada com sucesso')
         onVehicleUpdate()
       }
     } catch (error) {
       console.error('Error deleting vehicle:', error)
+      alert('❌ Erro ao deletar')
     }
   }
 
@@ -60,13 +61,15 @@ function Vehicles({ vehicles, onVehicleUpdate }) {
       })
       
       if (response.ok) {
-        alert(editingId ? 'Viatura atualizada com sucesso' : 'Viatura criada com sucesso')
+        alert(editingId ? '✅ Viatura atualizada com sucesso' : '✅ Viatura criada com sucesso')
         setShowModal(false)
         onVehicleUpdate()
+      } else {
+        alert('❌ Erro ao salvar')
       }
     } catch (error) {
       console.error('Error saving vehicle:', error)
-      alert('Erro ao salvar viatura')
+      alert('❌ Erro ao salvar viatura')
     }
   }
 
@@ -74,58 +77,60 @@ function Vehicles({ vehicles, onVehicleUpdate }) {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'year' || name === 'mileage' ? parseInt(value) : value
+      [name]: name === 'year' || name === 'mileage' ? parseInt(value) || 0 : value
     }))
   }
 
   return (
     <div className="vehicles">
       <div className="vehicles-header">
-        <h2>Gestão de Viaturas</h2>
+        <h2>🚗 Gestão de Viaturas</h2>
         <button className="btn-primary" onClick={handleAddVehicle}>
           ➕ Adicionar Viatura
         </button>
       </div>
 
-      {vehicles.length > 0 ? (
-        <table className="vehicles-table">
-          <thead>
-            <tr>
-              <th>Placa</th>
-              <th>Modelo</th>
-              <th>Ano</th>
-              <th>Km</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {vehicles.map((vehicle) => (
-              <tr key={vehicle.id}>
-                <td>{vehicle.plate}</td>
-                <td>{vehicle.model}</td>
-                <td>{vehicle.year}</td>
-                <td>{vehicle.mileage?.toLocaleString('pt-BR')}</td>
-                <td>
-                  <span className={`status-badge status-${vehicle.status}`}>
-                    {vehicle.status}
-                  </span>
-                </td>
-                <td>
-                  <button className="btn-edit" onClick={() => handleEditVehicle(vehicle)}>
-                    ✏️ Editar
-                  </button>
-                  <button className="btn-delete" onClick={() => handleDeleteVehicle(vehicle.id)}>
-                    🗑️ Deletar
-                  </button>
-                </td>
+      {vehicles && vehicles.length > 0 ? (
+        <div className="card">
+          <table className="vehicles-table">
+            <thead>
+              <tr>
+                <th>Placa</th>
+                <th>Modelo</th>
+                <th>Ano</th>
+                <th>Km</th>
+                <th>Status</th>
+                <th>Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {vehicles.map((vehicle) => (
+                <tr key={vehicle.id}>
+                  <td><strong>{vehicle.plate}</strong></td>
+                  <td>{vehicle.model}</td>
+                  <td>{vehicle.year}</td>
+                  <td>{vehicle.mileage?.toLocaleString('pt-BR') || 0}</td>
+                  <td>
+                    <span className={`status-badge status-${vehicle.status}`}>
+                      {vehicle.status === 'available' ? '✅ Disponível' : vehicle.status === 'maintenance' ? '🔧 Manutenção' : '⛔ Inativa'}
+                    </span>
+                  </td>
+                  <td>
+                    <button className="btn-edit" onClick={() => handleEditVehicle(vehicle)}>
+                      ✏️ Editar
+                    </button>
+                    <button className="btn-delete" onClick={() => handleDeleteVehicle(vehicle.id)}>
+                      🗑️ Deletar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <div className="card">
-          <p>Nenhuma viatura cadastrada. Clique em "Adicionar Viatura" para começar.</p>
+          <p>📭 Nenhuma viatura cadastrada. Clique em "Adicionar Viatura" para começar.</p>
         </div>
       )}
 
@@ -133,12 +138,12 @@ function Vehicles({ vehicles, onVehicleUpdate }) {
         <div className="modal open">
           <div className="modal-content">
             <div className="modal-header">
-              <h2>{editingId ? 'Editar Viatura' : 'Adicionar Viatura'}</h2>
+              <h2>{editingId ? '✏️ Editar Viatura' : '➕ Adicionar Viatura'}</h2>
               <button className="close-btn" onClick={() => setShowModal(false)}>✕</button>
             </div>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>Placa</label>
+                <label>Placa *</label>
                 <input
                   type="text"
                   name="plate"
@@ -149,7 +154,7 @@ function Vehicles({ vehicles, onVehicleUpdate }) {
                 />
               </div>
               <div className="form-group">
-                <label>Modelo</label>
+                <label>Modelo *</label>
                 <input
                   type="text"
                   name="model"
@@ -180,9 +185,9 @@ function Vehicles({ vehicles, onVehicleUpdate }) {
               <div className="form-group">
                 <label>Status</label>
                 <select name="status" value={formData.status} onChange={handleChange}>
-                  <option value="available">Disponível</option>
-                  <option value="maintenance">Em Manutenção</option>
-                  <option value="inactive">Inativa</option>
+                  <option value="available">✅ Disponível</option>
+                  <option value="maintenance">🔧 Em Manutenção</option>
+                  <option value="inactive">⛔ Inativa</option>
                 </select>
               </div>
               <div className="form-actions">

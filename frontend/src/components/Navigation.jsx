@@ -6,7 +6,7 @@ function Navigation({ currentPage, setCurrentPage }) {
     { id: 'dashboard', label: '📊 Dashboard', icon: '📊' },
     { id: 'vehicles', label: '🚗 Viaturas', icon: '🚗' },
     { id: 'maintenance', label: '🔧 Manutenção', icon: '🔧' },
-    { id: 'map', label: '📍 Mapa', icon: '📍' },
+    { id: 'map', label: '🗺️ Mapa', icon: '🗺️' },
     { id: 'reports', label: '📄 Relatórios', icon: '📄' },
   ]
 

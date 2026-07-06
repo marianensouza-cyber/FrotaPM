@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import '../styles/Maintenance.css'
 
 function Maintenance({ vehicles }) {
@@ -23,7 +23,7 @@ function Maintenance({ vehicles }) {
       const response = await fetch(`/api/maintenance/records/${vehicleId}`)
       if (response.ok) {
         const data = await response.json()
-        setRecords(data)
+        setRecords(data || [])
       }
     } catch (error) {
       console.error('Error fetching maintenance records:', error)
@@ -56,13 +56,15 @@ function Maintenance({ vehicles }) {
       })
       
       if (response.ok) {
-        alert('Registro de manutenção criado com sucesso')
+        alert('✅ Registro de manutenção criado com sucesso')
         setShowModal(false)
         fetchMaintenanceRecords(selectedVehicle)
+      } else {
+        alert('❌ Erro ao salvar')
       }
     } catch (error) {
       console.error('Error saving record:', error)
-      alert('Erro ao salvar registro')
+      alert('❌ Erro ao salvar registro')
     }
   }
 
@@ -82,23 +84,24 @@ function Maintenance({ vehicles }) {
         method: 'DELETE',
       })
       if (response.ok) {
-        alert('Registro deletado com sucesso')
+        alert('✅ Registro deletado com sucesso')
         fetchMaintenanceRecords(selectedVehicle)
       }
     } catch (error) {
       console.error('Error deleting record:', error)
+      alert('❌ Erro ao deletar')
     }
   }
 
   return (
     <div className="maintenance">
-      <h2>Histórico de Manutenção</h2>
+      <h2>🔧 Histórico de Manutenção</h2>
       
       <div className="vehicle-selector">
         <label>Selecione uma viatura:</label>
-        <select onChange={(e) => handleVehicleSelect(e.target.value)}>
+        <select onChange={(e) => handleVehicleSelect(e.target.value)} value={selectedVehicle || ''}>
           <option value="">-- Escolha uma viatura --</option>
-          {vehicles.map((vehicle) => (
+          {vehicles && vehicles.map((vehicle) => (
             <option key={vehicle.id} value={vehicle.id}>
               {vehicle.plate} - {vehicle.model}
             </option>
@@ -109,7 +112,7 @@ function Maintenance({ vehicles }) {
       {selectedVehicle && (
         <div className="card">
           <div className="maintenance-header">
-            <h3>Registros de Manutenção</h3>
+            <h3>📋 Registros de Manutenção</h3>
             <button className="btn-primary" onClick={handleAddRecord}>
               ➕ Adicionar Registro
             </button>
@@ -132,8 +135,8 @@ function Maintenance({ vehicles }) {
                   <tr key={record.id}>
                     <td>{record.maintenance_type}</td>
                     <td>{record.description}</td>
-                    <td>R$ {record.cost?.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-                    <td>{record.performed_by}</td>
+                    <td>R$ {record.cost?.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) || '0,00'}</td>
+                    <td>{record.performed_by || '-'}</td>
                     <td>{new Date(record.performed_at).toLocaleDateString('pt-BR')}</td>
                     <td>
                       <button className="btn-delete" onClick={() => handleDelete(record.id)}>
@@ -145,7 +148,7 @@ function Maintenance({ vehicles }) {
               </tbody>
             </table>
           ) : (
-            <p>Nenhum registro de manutenção para esta viatura.</p>
+            <p>📭 Nenhum registro de manutenção para esta viatura.</p>
           )}
         </div>
       )}
@@ -154,12 +157,12 @@ function Maintenance({ vehicles }) {
         <div className="modal open">
           <div className="modal-content">
             <div className="modal-header">
-              <h2>Adicionar Registro de Manutenção</h2>
+              <h2>➕ Adicionar Registro de Manutenção</h2>
               <button className="close-btn" onClick={() => setShowModal(false)}>✕</button>
             </div>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>Tipo de Manutenção</label>
+                <label>Tipo de Manutenção *</label>
                 <input
                   type="text"
                   name="maintenance_type"

@@ -4,6 +4,13 @@
   color: #1f2937;
 }
 
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: #6b7280;
+}
+
 .kpis-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
